@@ -1,0 +1,12 @@
+{
+  "ios": {
+    "debug": {
+      "developmentTeam": "6DET84M6VR"
+    },
+    "release": {
+      "developmentTeam": "6DET84M6VR",
+      "codeSignIdentity": "iPhone Developer",
+      "packageType": "ad-hoc"
+    }
+  }
+}

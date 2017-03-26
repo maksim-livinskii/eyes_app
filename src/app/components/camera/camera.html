@@ -1,0 +1,7 @@
+<a ng-click="vm.takePhoto()">take picture!</a>
+
+<div ng-repeat="image in vm.images">
+  <img
+    style="width: 100%"
+    data-ng-src="data:image/png;base64,{{image}}" />
+</div>
