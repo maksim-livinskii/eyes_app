@@ -1,10 +1,72 @@
 <!-- top bar-->
 
-<h1>App: {{ appCtrl.message }}</h1>
-<a ui-sref="app.page1">Page 1</a>
-<a ui-sref="app.profile">Profile</a>
-<a ui-sref="app.camera">Camera</a>
+<div class="top" ng-click="appCtrl.goTo('home')">
+  <h1>EYE Tracker</h1>
+</div>
 
-<div ui-view></div>
+<div class="middle">
 
-<!-- bottom bar -->
+  <div ng-if="appCtrl.is('home')" style="padding-top: 50%">
+
+    <div class="progress" ng-if="appCtrl.isData()">
+      <div class="progress-bar" role="progressbar" aria-valuenow="{{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount }}"
+      aria-valuemin="0" aria-valuemax="100" style="width: {{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount }}%">
+        {{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount | number: 2 }}
+      </div>
+    </div>
+
+    <div ng-if="!appCtrl.isData()" class="center">
+      <h2 ng-hide="appCtrl.state.takedPhoto">Please, select photos in order to continue</h2>
+      <h2 ng-show="appCtrl.state.takedPhoto">Please, wait a moment..</h2>
+    </div>
+
+  </div>
+
+  <div ng-if="appCtrl.is('data')">
+    <img
+      ng-repeat="image in appCtrl.state.images"
+      style="width: 100%"
+      data-ng-src="data:image/png;base64,{{ image }}" />
+
+    <!-- <img
+      ng-show="appCtrl.state.image"
+      style="width: 100%"
+      data-ng-src="data:image/png;base64,{{ appCtrl.state.image }}" /> -->
+  </div>
+
+  <div ng-if="appCtrl.is('table')">
+    <div class="panel panel-default">
+      <div class="panel-heading">Eyes table</div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Left eye</th>
+            <th>Right eye</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="eye in appCtrl.state.eyes track by $index">
+            <td>{{ $index }}</td>
+            <td>({{ eye.left.x }}, {{ eye.left.y }})</td>
+            <td>({{ eye.right.x }}, {{ eye.right.y }})</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div ng-if="appCtrl.is('graphic')">
+    <div ng-repeat="eye in appCtrl.state.eyes track by $index">
+      <p>{{ $index + 1 }}. ({{ eye.left.x }}, {{ eye.left.y }}), ({{ eye.right.x }}, {{ eye.right.y }})</p>
+    </div>
+  </div>
+</div>
+
+<div class="btn-group btn-group-justified down" role="group" aria-label="...">
+  <a href role="button" class="btn btn-success" ng-click="appCtrl.takePhoto()">Select<br/>photos</a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('data') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('data')">Data</a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('table') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('table')">Table</a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('graphic') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('graphic')">Graphic</a>
+</div>

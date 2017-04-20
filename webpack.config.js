@@ -4,14 +4,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const buildFolder = 'www';
-// const buildFolder = 'android_asset/www';
 
 const VENDOR_LIBS = [
   'angular',
   'angular-ui-router',
   'angular-ui-router.stateHelper',
+  'angular-ui-bootstrap',
   'ng-file-upload'
 ];
 
@@ -23,7 +24,6 @@ module.exports = {
   output: {
     path: path.join(__dirname, buildFolder),
     filename: '[name].[chunkhash].js',
-    // publicPath: 'file:///android_asset/www/',
   },
   module: {
     rules: [
@@ -31,6 +31,17 @@ module.exports = {
         use: ['babel-loader'],
         test: /\.js$/,
         exclude: /node_modules/
+      },
+      {
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ["css-loader", "less-loader"],
+        })
+      },
+      {
+        test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        loader: 'url-loader?limit=100000&name=[name].[ext]'
       },
     ]
   },
@@ -54,6 +65,7 @@ module.exports = {
         from: 'app/**/*.html',
         to: path.join(__dirname, buildFolder)
       },
-    ])
+    ]),
+    new ExtractTextPlugin('styles.css')
   ]
 };

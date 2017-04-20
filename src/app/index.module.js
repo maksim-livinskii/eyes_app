@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 
 // import { routerConfig } from './index.route';
 
+require('../assets/styles/main.less');
+
 const appModule = angular.module('eyes', [
   'ui.router',
   'ui.router.stateHelper',
@@ -48,18 +50,24 @@ try {
       console.log('window.cordova', window.cordova);
       document.addEventListener('deviceready', () => {
 
-        let permissions = window.cordova.plugins.permissions;
+        StatusBar.hide();
 
-        permissions.requestPermission(permissions.READ_EXTERNAL_STORAGE, (status) => {
-          console.log('is camera ready ? ', status.hasPermission);
-          if (status.hasPermission) {
-            bootstrap();
-          } else {
+        let permissions = window.cordova.plugins && window.cordova.plugins.permissions;
+
+        if (permissions) {
+          permissions.requestPermission(permissions.READ_EXTERNAL_STORAGE, (status) => {
+            console.log('is camera ready ? ', status.hasPermission);
+            if (status.hasPermission) {
+              bootstrap();
+            } else {
+              console.log('not permissions');
+            }
+          }, () => {
             console.log('not permissions');
-          }
-        }, () => {
-          console.log('not permissions');
-        });
+          });
+        } else {
+          bootstrap();
+        }
 
       }, false);
     } else {
