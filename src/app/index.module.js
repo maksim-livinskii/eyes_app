@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 const appModule = angular.module('eyes', [
   'ui.router',
   'ui.router.stateHelper',
+  'ngFileUpload',
   componentsModule,
   // sharedModule
 ])
@@ -46,7 +47,20 @@ try {
     if (window.cordova) {
       console.log('window.cordova', window.cordova);
       document.addEventListener('deviceready', () => {
-        bootstrap();
+
+        let permissions = window.cordova.plugins.permissions;
+
+        permissions.requestPermission(permissions.READ_EXTERNAL_STORAGE, (status) => {
+          console.log('is camera ready ? ', status.hasPermission);
+          if (status.hasPermission) {
+            bootstrap();
+          } else {
+            console.log('not permissions');
+          }
+        }, () => {
+          console.log('not permissions');
+        });
+
       }, false);
     } else {
       angular.element(document).ready(function() {

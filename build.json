@@ -8,5 +8,24 @@
       "codeSignIdentity": "iPhone Developer",
       "packageType": "ad-hoc"
     }
-  }
+  },
+  "android": {
+     "debug": {
+       "keystore": "./platforms/android/example.keystore",
+       "storePassword": "Edik7264260apple",
+       "alias": "example",
+       "password" : "Edik7264260apple",
+       "keystoreType": ""
+     },
+     "release": {
+       "keystore": "./platforms/android/example.keystore",
+       "storePassword": "Edik7264260apple",
+       "alias": "example",
+       "password" : "Edik7264260apple",
+       "keystoreType": ""
+     },
+     "lintOptions": {
+       "disable": "MissingTranslation"
+     }
+   }
 }

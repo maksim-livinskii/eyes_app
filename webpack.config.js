@@ -11,7 +11,8 @@ const buildFolder = 'www';
 const VENDOR_LIBS = [
   'angular',
   'angular-ui-router',
-  'angular-ui-router.stateHelper'
+  'angular-ui-router.stateHelper',
+  'ng-file-upload'
 ];
 
 module.exports = {
