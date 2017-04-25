@@ -1,11 +1,8 @@
 import angular from 'angular';
 
 import componentsModule from './components/components.module';
-// import sharedModule from './shared/shared.module';
 
 import { AppController } from './app.controller';
-
-// import { routerConfig } from './index.route';
 
 require('../assets/styles/main.less');
 
@@ -13,6 +10,7 @@ const appModule = angular.module('eyes', [
   'ui.router',
   'ui.router.stateHelper',
   'ngFileUpload',
+  'nvd3',
   componentsModule,
   // sharedModule
 ])
@@ -51,6 +49,7 @@ try {
       document.addEventListener('deviceready', () => {
 
         StatusBar.hide();
+        navigator.splashscreen.hide();
 
         let permissions = window.cordova.plugins && window.cordova.plugins.permissions;
 

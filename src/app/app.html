@@ -1,40 +1,55 @@
 <!-- top bar-->
 
 <div class="top" ng-click="appCtrl.goTo('home')">
-  <h1>EYE Tracker</h1>
+  <h1>EYE <i class="fa fa-eye" aria-hidden="true"></i> Tracker</h1>
 </div>
 
 <div class="middle">
 
   <div ng-if="appCtrl.is('home')" style="padding-top: 50%">
 
-    <div class="progress" ng-if="appCtrl.isData()">
+    <div class="progress" ng-if="appCtrl.isData() && !appCtrl.isDataComplete()">
       <div class="progress-bar" role="progressbar" aria-valuenow="{{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount }}"
       aria-valuemin="0" aria-valuemax="100" style="width: {{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount }}%">
-        {{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount | number: 2 }}
+        Processing...{{ appCtrl.state.count * 100 / appCtrl.state.allImagesCount | number: 0 }}%
+      </div>
+    </div>
+
+    <div class="panel panel-success" ng-if="appCtrl.isData() && appCtrl.isDataComplete()">
+      <div class="panel-heading">Complete!</div>
+      <div class="panel-body">
+        <ul>
+          <li>Click <strong>Data</strong> in order to see processed photos.</li>
+          <li>Click <strong>Table</strong> in order to see table results.</li>
+          <li>Click <strong>Graph</strong> in order to see results in a graph view.</li>
+        </ul>
+        <p>If you want to load new photos, just click <strong>Select photos</strong></p>
       </div>
     </div>
 
     <div ng-if="!appCtrl.isData()" class="center">
-      <h2 ng-hide="appCtrl.state.takedPhoto">Please, select photos in order to continue</h2>
+      <div>
+        <h2 ng-hide="appCtrl.state.takedPhoto">Please, add photos in order to continue</h2>
+      </div>
       <h2 ng-show="appCtrl.state.takedPhoto">Please, wait a moment..</h2>
     </div>
 
   </div>
 
   <div ng-if="appCtrl.is('data')">
-    <img
+    <!-- <img
       ng-repeat="image in appCtrl.state.images"
       style="width: 100%"
-      data-ng-src="data:image/png;base64,{{ image }}" />
+      data-ng-src="data:image/png;base64,{{ image }}" /> -->
 
-    <!-- <img
+    <img
       ng-show="appCtrl.state.image"
       style="width: 100%"
-      data-ng-src="data:image/png;base64,{{ appCtrl.state.image }}" /> -->
+      data-ng-src="data:image/png;base64,{{ appCtrl.state.image }}" />
   </div>
 
   <div ng-if="appCtrl.is('table')">
+    <!-- Data: {{ appCtrl.firstImageDate }} - {{ appCtrl.lastImageDate }} -->
     <div class="panel panel-default">
       <div class="panel-heading">Eyes table</div>
       <table class="table table-bordered">
@@ -43,13 +58,15 @@
             <th>#</th>
             <th>Left eye</th>
             <th>Right eye</th>
+            <th>Photo time</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="eye in appCtrl.state.eyes track by $index">
-            <td>{{ $index }}</td>
+            <td>{{ $index + 1 }}</td>
             <td>({{ eye.left.x }}, {{ eye.left.y }})</td>
             <td>({{ eye.right.x }}, {{ eye.right.y }})</td>
+            <td>{{ ($index * appCtrl.state.step) / 1000 | number: 2 }} / sec.</td>
           </tr>
         </tbody>
       </table>
@@ -57,16 +74,27 @@
   </div>
 
 
-  <div ng-if="appCtrl.is('graphic')">
-    <div ng-repeat="eye in appCtrl.state.eyes track by $index">
-      <p>{{ $index + 1 }}. ({{ eye.left.x }}, {{ eye.left.y }}), ({{ eye.right.x }}, {{ eye.right.y }})</p>
-    </div>
+  <div ng-if="appCtrl.is('graphic')" ng-init="appCtrl.draw()" class='chart'>
+    <nvd3 options='appCtrl.chart.options1' data='appCtrl.chart.data1'></nvd3>
+    <nvd3 options='appCtrl.chart.options2' data='appCtrl.chart.data2'></nvd3>
   </div>
 </div>
 
 <div class="btn-group btn-group-justified down" role="group" aria-label="...">
-  <a href role="button" class="btn btn-success" ng-click="appCtrl.takePhoto()">Select<br/>photos</a>
-  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('data') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('data')">Data</a>
-  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('table') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('table')">Table</a>
-  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('graphic') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('graphic')">Graphic</a>
+  <a href role="button" class="btn btn-success" ng-click="appCtrl.takePhoto()">
+    <i class="fa fa-camera" aria-hidden="true"></i><br>
+    Add photo
+  </a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('data') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('data')">
+    <i class="fa fa-file-image-o" aria-hidden="true"></i><br>
+    Data
+  </a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('table') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('table')">
+    <i class="fa fa-table" aria-hidden="true"></i><br>
+    Table
+  </a>
+  <a href role="button" class="btn btn-primary" ng-class="appCtrl.is('graphic') ? 'btn-warning' : 'btn-primary'" ng-disabled="!appCtrl.isData()" ng-click="appCtrl.isData() && appCtrl.goTo('graphic')">
+    <i class="fa fa-area-chart" aria-hidden="true"></i><br>
+    Graphic
+  </a>
 </div>

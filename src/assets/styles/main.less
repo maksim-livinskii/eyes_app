@@ -1,4 +1,14 @@
 @import '~bootstrap/less/bootstrap';
+@import '~font-awesome/less/font-awesome';
+@import '~nvd3/build/nv.d3.css';
+
+.nvd3 .nv-axis.nv-x path.domain {
+  stroke-opacity: 0;
+}
+
+// .container-fluid {
+//   padding-right: 0;
+// }
 
 html, body {
   width: 100%;
@@ -25,6 +35,12 @@ img {
   background-color: black;
   color: white;
   width: 100%;
+  padding: 5px;
+  text-align: center;
+  h1 {
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .middle {

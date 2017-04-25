@@ -11,6 +11,11 @@ cordova plugin add cordova-plugin-file
 cordova plugin add cordova-plugin-image-picker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="your message"
 cordova plugin add cordova-plugin-android-permissions
 cordova plugin add cordova-plugin-statusbar
+cordova plugin add cordova-plugin-dialogs
+cordova plugin add cordova-plugin-device
+
+
+cordova-icon --config=config.xml --icon=src/icons/icon.png
 
 
 cordova build ios
