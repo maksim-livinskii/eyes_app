@@ -66,7 +66,8 @@
             <td>{{ $index + 1 }}</td>
             <td>({{ eye.left.x }}, {{ eye.left.y }})</td>
             <td>({{ eye.right.x }}, {{ eye.right.y }})</td>
-            <td>{{ ($index * appCtrl.state.step) / 1000 | number: 2 }} / sec.</td>
+            <!-- <td>{{ ($index * appCtrl.state.step) / 1000 | number: 2 }} / sec.</td> -->
+            <td>{{ ($index * appCtrl.state.step) | number: 2 }} / sec.</td>
           </tr>
         </tbody>
       </table>

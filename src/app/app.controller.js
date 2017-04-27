@@ -8,7 +8,8 @@ class AppController {
       image: null,
       images: [],
       eyes: [],
-      count: 0
+      count: 0,
+      lockAddPhoto: false
     };
 
     this.chart = {};
@@ -36,6 +37,11 @@ class AppController {
   }
 
   takePhoto() {
+
+    if (this.state.lockAddPhoto) {
+      return;
+    }
+
     if (this.state.eyes.length) {
       navigator.notification.confirm(
         'All current data will be removed!', // message
@@ -55,11 +61,14 @@ class AppController {
 
     window.imagePicker.getPictures(
     	(results) => {
-        this.results = results;
-        this.state.takedPhoto = results.length > 0;
-    		this.process(results);
-        this.location = 'home';
-        this.$scope.$apply();
+        if (results && results.length > 0) {
+          this.results = results;
+          this.state.lockAddPhoto = true;
+          this.state.takedPhoto = results.length > 0;
+      		this.process(results);
+          this.location = 'home';
+          this.$scope.$apply();
+        }
     	}, (error) => {
     		console.log('Error: ' + error); // log
     	}, {
@@ -74,9 +83,16 @@ class AppController {
     this.firstImageDate = null;
     this.lastImageDate = null;
 
-    Promise.all(images.map(image => this.getFile(image)))
+    Promise.all(
+      images.map((image) => {
+        // console.log(image);
+        return this.getFile(image);
+      })
+    )
       .then((files) => {
         files.forEach(({ file }) => {
+
+          // console.log(file);
 
           this.firstImageDate = this.firstImageDate || file.lastModifiedDate;
           this.lastImageDate = this.lastImageDate || file.lastModifiedDate;
@@ -90,7 +106,7 @@ class AppController {
           }
         })
 
-        this.state.step = (this.lastImageDate - this.firstImageDate) / images.length;
+        this.state.step = 0.05; // (this.lastImageDate - this.firstImageDate) / images.length;
 
         return files;
       })
@@ -122,6 +138,10 @@ class AppController {
                   });
 
                   this.state.count += 1;
+
+                  if (this.state.count === this.state.allImagesCount) {
+                    this.state.lockAddPhoto = false;
+                  }
                 });
 
               show = false;
@@ -135,6 +155,8 @@ class AppController {
       window.resolveLocalFileSystemURL(path, (fileEntry) => {
 
         // console.log('fileEntry.toURL: ', fileEntry.toURL());
+        // console.log('fileEntry.toInternalURL: ', fileEntry.toInternalURL());
+
         // let url = fileEntry.toURL();
         // let arr = url.match(/(.*\D)(\d+)(.*)/);
         // for (let i = Number(arr[2]); i < Number(arr[2]) + 100; i++) {
@@ -179,7 +201,7 @@ class AppController {
     const leftEye = this.state.eyes.map(eye => eye.left)
     const rightEye = this.state.eyes.map(eye => eye.right)
 
-    const step = this.state.step / 1000;
+    const step = this.state.step; // / 1000;
     let time = 0;
 
     let leftX = leftEye.map((eye) => {
@@ -309,10 +331,10 @@ class AppController {
         yAxis: {
           axisLabel,
           "axisLabelDistance": -20,
-          showMaxMin: true,
+          showMaxMin: false,
           ticks: 4,
         },
-        yDomain: [min - 50, max + 50],
+        // yDomain: [min - 10, max + 10],
       },
       "title": {
         enable: true,

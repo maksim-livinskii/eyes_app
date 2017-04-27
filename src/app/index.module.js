@@ -45,7 +45,6 @@ function bootstrap() {
 try {
   angular.element(document).ready(() => {
     if (window.cordova) {
-      console.log('window.cordova', window.cordova);
       document.addEventListener('deviceready', () => {
 
         StatusBar.hide();
